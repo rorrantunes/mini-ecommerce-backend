@@ -1,9 +1,14 @@
 import { promises as fs } from 'fs';
-import { v4 as uuidv4 } from 'uuid'; // recordatorio!!! esto es para generar IDs únicos
+import { v4 as uuidv4 } from 'uuid';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default class ProductManager {
-  constructor(path) {
-    this.path = path; // NO OLVIDARME!!! -> ruta del archivo JSON
+  constructor() {
+    this.path = path.join(__dirname, '../data/products.json');
   }
 
   async getProducts() {

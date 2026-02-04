@@ -3,7 +3,7 @@ import { Router } from 'express';
 import ProductManager from '../managers/ProductManager.js';
 
 const router = Router();
-const manager = new ProductManager('./src/data/products.json');
+const manager = new ProductManager();
 
 // para listar todos los productos!!
 router.get('/', async (req, res) => {
@@ -37,12 +37,7 @@ router.put('/:pid', async (req, res) => {
 // para eliminar producto por ID!
 router.delete('/:pid', async (req, res) => {
   const { pid } = req.params;
-  const result = await manager.deleteProduct(pid);
-
-  if (!result) {
-    return res.status(404).json({ message: 'Producto no encontrado' });
-  }
-
+  await manager.deleteProduct(pid);
   res.json({ message: 'Producto eliminado' });
 });
 
