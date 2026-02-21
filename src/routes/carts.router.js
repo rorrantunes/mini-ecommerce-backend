@@ -1,52 +1,31 @@
-import { Router } from 'express';
-import CartManager from '../managers/CartManager.js';
-import ProductManager from '../managers/ProductManager.js';
+import { Router } from "express";
+import {
+  createCart,
+  getCartById,
+  deleteProductFromCart,
+  updateCart,
+  updateProductQuantity,
+  clearCart
+} from "../controllers/carts.controller.js";
 
 const router = Router();
 
-const cartManager = new CartManager('./src/data/carts.json');
-const productManager = new ProductManager('./src/data/products.json');
+// 🛒 Crear nuevo carrito
+router.post("/", createCart);
 
-// para crear un nuevo carrito
-router.post('/', async (req, res) => {
-  const newCart = await cartManager.createCart();
-  res.status(201).json(newCart);
-});
+// 🔍 Obtener carrito con populate
+router.get("/:cid", getCartById);
 
-// para poder tener carrito por ID
-router.get('/:cid', async (req, res) => {
-  const { cid } = req.params;
-  const cart = await cartManager.getCartById(cid);
+// ❌ Eliminar producto específico del carrito
+router.delete("/:cid/products/:pid", deleteProductFromCart);
 
-  if (!cart) {
-    return res.status(404).json({ message: 'Carrito no encontrado' });
-  }
+// 🔁 Actualizar TODOS los productos del carrito
+router.put("/:cid", updateCart);
 
-  res.json(cart.products);
-});
+// 🔢 Actualizar SOLO cantidad de un producto
+router.put("/:cid/products/:pid", updateProductQuantity);
 
-// para agregar producto a un carrito
-router.post('/:cid/product/:pid', async (req, res) => {
-  const { cid, pid } = req.params;
-
-  // para validar que exista el carrito
-  const cart = await cartManager.getCartById(cid);
-  if (!cart) {
-    return res.status(404).json({ message: 'Carrito no encontrado' });
-  }
-
-  // para validar que exista el producto
-  const product = await productManager.getProductById(pid);
-  if (!product) {
-    return res.status(404).json({ message: 'Producto no encontrado' });
-  }
-
-  const updatedCart = await cartManager.addProductToCart(cid, pid);
-
-  res.json({
-    message: 'Producto agregado al carrito',
-    cart: updatedCart
-  });
-});
+// 🧹 Vaciar carrito completo
+router.delete("/:cid", clearCart);
 
 export default router;
