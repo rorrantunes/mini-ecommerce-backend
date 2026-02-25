@@ -1,0 +1,28 @@
+<h1>{{product.title}}</h1>
+
+<p>{{product.description}}</p>
+<p><strong>Precio:</strong> ${{product.price}}</p>
+<p><strong>Categoría:</strong> {{product.category}}</p>
+<p><strong>Stock:</strong> {{product.stock}}</p>
+
+<button onclick="addToCart('{{product._id}}')">
+  Agregar al carrito 🛒
+</button>
+
+<br><br>
+<a href="/products">⬅ Volver a productos</a>
+
+<script>
+  const CART_ID = "REEMPLAZAR_POR_UN_ID_REAL";
+
+  async function addToCart(productId) {
+    try {
+      await fetch(`/api/carts/${CART_ID}/products/${productId}`, {
+        method: "POST"
+      });
+      alert("Producto agregado al carrito 🛒");
+    } catch (error) {
+      alert("Error al agregar producto");
+    }
+  }
+</script>

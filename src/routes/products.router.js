@@ -1,44 +1,27 @@
-// src/routes/products.router.js
-import { Router } from 'express';
-import ProductManager from '../managers/ProductManager.js';
+import { Router } from "express";
+import {
+  getProducts,
+  getProductById,
+  createProduct,
+  updateProduct,
+  deleteProduct
+} from "../controllers/products.controller.js";
 
 const router = Router();
-const manager = new ProductManager();
 
-// para listar todos los productos!!
-router.get('/', async (req, res) => {
-  const products = await manager.getProducts();
-  res.json(products);
-});
+//  GET con filtros, paginación, sort, query
+router.get("/", getProducts);
 
-// para obtener producto por ID!!
-router.get('/:pid', async (req, res) => {
-  const { pid } = req.params;
-  const product = await manager.getProductById(pid);
-  if (!product) return res.status(404).json({ message: 'Producto no encontrado' });
-  res.json(product);
-});
+//  GET producto por ID
+router.get("/:pid", getProductById);
 
-// para crear nuevo producto!
-router.post('/', async (req, res) => {
-  const productData = req.body;
-  const newProduct = await manager.addProduct(productData);
-  res.status(201).json(newProduct);
-});
+//  Crear producto
+router.post("/", createProduct);
 
-// para actualizar producto por ID!
-router.put('/:pid', async (req, res) => {
-  const { pid } = req.params;
-  const updatedProduct = await manager.updateProduct(pid, req.body);
-  if (!updatedProduct) return res.status(404).json({ message: 'Producto no encontrado' });
-  res.json(updatedProduct);
-});
+//  Actualizar producto
+router.put("/:pid", updateProduct);
 
-// para eliminar producto por ID!
-router.delete('/:pid', async (req, res) => {
-  const { pid } = req.params;
-  await manager.deleteProduct(pid);
-  res.json({ message: 'Producto eliminado' });
-});
+//  Eliminar producto
+router.delete("/:pid", deleteProduct);
 
 export default router;

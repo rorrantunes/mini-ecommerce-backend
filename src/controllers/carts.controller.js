@@ -1,5 +1,4 @@
-import Cart from "../models/cart.model.js";
-import Product from "../models/product.model.js";
+import { CartModel as Cart } from "../models/cart.model.js";
 
 // 🛒 Crear carrito
 export const createCart = async (req, res) => {
@@ -34,7 +33,9 @@ export const deleteProductFromCart = async (req, res) => {
     const { cid, pid } = req.params;
 
     const cart = await Cart.findById(cid);
-    if (!cart) return res.status(404).json({ status: "error", error: "Carrito no encontrado" });
+    if (!cart) {
+      return res.status(404).json({ status: "error", error: "Carrito no encontrado" });
+    }
 
     cart.products = cart.products.filter(p => p.product.toString() !== pid);
 
@@ -57,6 +58,10 @@ export const updateCart = async (req, res) => {
       { new: true }
     );
 
+    if (!cart) {
+      return res.status(404).json({ status: "error", error: "Carrito no encontrado" });
+    }
+
     res.json({ status: "success", cart });
   } catch (error) {
     res.status(500).json({ status: "error", error: error.message });
@@ -70,12 +75,19 @@ export const updateProductQuantity = async (req, res) => {
     const { quantity } = req.body;
 
     const cart = await Cart.findById(cid);
-    if (!cart) return res.status(404).json({ status: "error", error: "Carrito no encontrado" });
+    if (!cart) {
+      return res.status(404).json({ status: "error", error: "Carrito no encontrado" });
+    }
 
-    const productIndex = cart.products.findIndex(p => p.product.toString() === pid);
+    const productIndex = cart.products.findIndex(
+      p => p.product.toString() === pid
+    );
 
     if (productIndex === -1) {
-      return res.status(404).json({ status: "error", error: "Producto no está en el carrito" });
+      return res.status(404).json({
+        status: "error",
+        error: "Producto no está en el carrito"
+      });
     }
 
     cart.products[productIndex].quantity = quantity;
@@ -93,7 +105,9 @@ export const clearCart = async (req, res) => {
     const { cid } = req.params;
 
     const cart = await Cart.findById(cid);
-    if (!cart) return res.status(404).json({ status: "error", error: "Carrito no encontrado" });
+    if (!cart) {
+      return res.status(404).json({ status: "error", error: "Carrito no encontrado" });
+    }
 
     cart.products = [];
     await cart.save();
