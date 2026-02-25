@@ -9,6 +9,11 @@ import {
 
 const router = Router();
 
+// 🧪 TEST ROUTE (debug)
+router.get("/test", (req, res) => {
+  res.send("ROUTE PRODUCTS OK ✅");
+});
+
 //  GET con filtros, paginación, sort, query
 router.get("/", getProducts);
 
